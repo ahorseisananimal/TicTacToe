@@ -6,43 +6,17 @@ public class TicTacToe {
 
     public static final int GAME_MODE_SINGLE = 1;
     public static final int GAME_MODE_TWO_PLAYERS = 2;
-    private static String[][] field;
-    private static String[] playersNames;
+
+    private static MatchInfo currentMatchInfo;
+    private static Repository repository = new FileRepository();
 
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     public static void main(String[] args) {
-        //startGame();
-
-
-        run();
+        startGame(GAME_MODE_SINGLE);
+        //run();
     }
 
-    /*   private static void collectionExample() {
-           List<String> list = new ArrayList<>();
-           list.add("lol");
-           list.add("lol");
-           list.add("lol2");
 
-           list.get(0);//lol
-           list.get(2);//lol2
-
-
-           Set<String> set = new HashSet<>();
-           set.add("lol");
-           set.add("lol");
-           set.add("lol2");
-
-           set.contains("lol"); //true
-           set.containsAll(list); //true
-
-
-           Map<String, String> map = new HashMap<>();
-           map.put("id_1", "Vasya");
-           map.put("id_1", "Ivan");
-           map.put("id_2", "Petya");
-           map.get("id_2"); // Petya
-       }
-      */
     private static void run() {
         while (true) {
             System.out.println("Choose your game mode:");
@@ -70,7 +44,8 @@ public class TicTacToe {
 
 
     private static void startGame(int gameMode) {
-        playersNames = new String[]{"Computer", "Computer"};
+        currentMatchInfo = new MatchInfo();
+        currentMatchInfo.playersNames = new String[]{"Computer", "Computer"};
         askPlayersName(0);
         if (gameMode == GAME_MODE_TWO_PLAYERS) {
             askPlayersName(1);
@@ -94,6 +69,8 @@ public class TicTacToe {
             }
         }
         System.out.println();
+        repository.saveMatch(currentMatchInfo);
+        currentMatchInfo = null;
     }
 
     private static void askPlayersName(int playersNumber) {
@@ -101,15 +78,15 @@ public class TicTacToe {
         Scanner in = new Scanner(System.in);
         String s = in.next();
 
-        playersNames[playersNumber] = s;
+        currentMatchInfo.playersNames[playersNumber] = s;
 
     }
 
     private static void createField() {
-        field = new String[3][3];
+        currentMatchInfo.field = new String[3][3];
         for (int x = 0; x < 3; x++) {
             for (int y = 0; y < 3; y++) {
-                field[x][y] = "_";
+                currentMatchInfo.field[x][y] = "_";
             }
         }
     }
@@ -118,7 +95,7 @@ public class TicTacToe {
         String fieldSum = "";
         for (int x = 0; x < 3; x++) {
             for (int y = 0; y < 3; y++) {
-                fieldSum = fieldSum + field[x][y];
+                fieldSum = fieldSum + currentMatchInfo.field[x][y];
             }
         }
         boolean isDraw = !fieldSum.contains("_");
@@ -134,25 +111,25 @@ public class TicTacToe {
         String checkDiag1 = "";
         String checkDiag2 = "";
         for (int x = 0; x < 3; x++) {
-            checkVer = field[x][0] + field[x][1] + field[x][2];
-            checkHor = field[0][x] + field[1][x] + field[2][x];
+            checkVer = currentMatchInfo.field[x][0] + currentMatchInfo.field[x][1] + currentMatchInfo.field[x][2];
+            checkHor = currentMatchInfo.field[0][x] + currentMatchInfo.field[1][x] + currentMatchInfo.field[2][x];
             if (checkHor.equals("XXX") || checkVer.equals("XXX")) {
-                System.out.println(playersNames[0] + " won");
+                System.out.println(currentMatchInfo.playersNames[0] + " won");
                 return true;
             }
             if (checkHor.equals("OOO") || checkVer.equals("OOO")) {
-                System.out.println(playersNames[1] + " won");
+                System.out.println(currentMatchInfo.playersNames[1] + " won");
                 return true;
             }
         }
-        checkDiag1 = field[0][0] + field[1][1] + field[2][2];
-        checkDiag2 = field[2][0] + field[1][1] + field[0][2];
+        checkDiag1 = currentMatchInfo.field[0][0] + currentMatchInfo.field[1][1] + currentMatchInfo.field[2][2];
+        checkDiag2 = currentMatchInfo.field[2][0] + currentMatchInfo.field[1][1] + currentMatchInfo.field[0][2];
         if (checkDiag1.equals("XXX") || checkDiag2.equals("XXX")) {
-            System.out.println(playersNames[0] + " won");
+            System.out.println(currentMatchInfo.playersNames[0] + " won");
             return true;
         }
         if (checkDiag1.equals("OOO") || checkDiag2.equals("OOO")) {
-            System.out.println(playersNames[1] + " won");
+            System.out.println(currentMatchInfo.playersNames[1] + " won");
             return true;
         }
         return false;
@@ -161,7 +138,7 @@ public class TicTacToe {
     private static void printField() {
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {
-                System.out.print(field[x][y] + " ");
+                System.out.print(currentMatchInfo.field[x][y] + " ");
             }
             System.out.println();
 
@@ -199,11 +176,11 @@ public class TicTacToe {
                 }
             }
 
-            if (field[x][y].equals("_")) {
+            if (currentMatchInfo.field[x][y].equals("_")) {
                 if (playerNumber == 1) {
-                    field[x][y] = "X";
+                    currentMatchInfo.field[x][y] = "X";
                 } else {
-                    field[x][y] = "O";
+                    currentMatchInfo.field[x][y] = "O";
                 }
                 break;
             } else {
@@ -221,8 +198,8 @@ public class TicTacToe {
         while (true) {
             int x = (int) (Math.random() * 3);
             int y = (int) (Math.random() * 3);
-            if (field[x][y].equals("_")) {
-                field[x][y] = "O";
+            if (currentMatchInfo.field[x][y].equals("_")) {
+                currentMatchInfo.field[x][y] = "O";
                 break;
             }
         }
@@ -247,6 +224,31 @@ public class TicTacToe {
             }
         }
         System.out.println();
-        */
+        *//*   private static void collectionExample() {
+           List<String> list = new ArrayList<>();
+           list.add("lol");
+           list.add("lol");
+           list.add("lol2");
+
+           list.get(0);//lol
+           list.get(2);//lol2
+
+
+           Set<String> set = new HashSet<>();
+           set.add("lol");
+           set.add("lol");
+           set.add("lol2");
+
+           set.contains("lol"); //true
+           set.containsAll(list); //true
+
+
+           Map<String, String> map = new HashMap<>();
+           map.put("id_1", "Vasya");
+           map.put("id_1", "Ivan");
+           map.put("id_2", "Petya");
+           map.get("id_2"); // Petya
+       }
+      */
 
 }
