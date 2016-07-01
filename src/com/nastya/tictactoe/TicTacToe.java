@@ -8,7 +8,7 @@ public class TicTacToe {
     public static final int GAME_MODE_TWO_PLAYERS = 2;
 
     private static MatchInfo currentMatchInfo;
-    private static Repository repository = new FileRepository();
+    private static Repository repository = /*new SqlRepository();*/ new FileRepository();
 
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     public static void main(String[] args) {
