@@ -12,8 +12,8 @@ public class TicTacToe {
 
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     public static void main(String[] args) {
-        startGame(GAME_MODE_SINGLE);
-        //run();
+        //startGame(GAME_MODE_SINGLE);
+        run();
     }
 
 
@@ -23,7 +23,8 @@ public class TicTacToe {
             System.out.println("   1 - Single player");
             System.out.println("   2 - Two players");
             System.out.println("   3 - Online game");
-            System.out.println("   4 - Exit");
+            System.out.println("   4 - Match history");
+            System.out.println("   5 - Exit");
             Scanner in = new Scanner(System.in);
             String s = in.next();
             switch (s) {
@@ -37,9 +38,16 @@ public class TicTacToe {
                     System.out.println("The mode hasn't been implemented yet");
                     break;
                 case "4":
+                    printMatchHistory();
+                    break;
+                case "5":
                     System.exit(0);
             }
         }
+    }
+
+    private static void printMatchHistory() {
+        List<MatchInfo> matchHistory = repository.getMatchHistory();
     }
 
 
@@ -52,15 +60,19 @@ public class TicTacToe {
         }
         createField();
         printField();
+        currentMatchInfo.startDate = System.currentTimeMillis();
         while (true) {
             playersTurn(1);
+            currentMatchInfo.turnsCount++;
             if (checkWin() || checkDraw()) {
                 break;
             }
             if (gameMode == GAME_MODE_SINGLE) {
                 computersTurn();
+                currentMatchInfo.turnsCount++;
             } else if (gameMode == GAME_MODE_TWO_PLAYERS) {
                 playersTurn(2);
+                currentMatchInfo.turnsCount++;
             } else {
                 throw new RuntimeException("The game mode is incorrect");
             }
@@ -68,6 +80,7 @@ public class TicTacToe {
                 break;
             }
         }
+        currentMatchInfo.endDate = System.currentTimeMillis();
         System.out.println();
         repository.saveMatch(currentMatchInfo);
         currentMatchInfo = null;
@@ -101,6 +114,7 @@ public class TicTacToe {
         boolean isDraw = !fieldSum.contains("_");
         if (isDraw) {
             System.out.println("Draw!");
+            currentMatchInfo.result = MatchInfo.RESULT_DRAW;
         }
         return isDraw;
     }
@@ -115,10 +129,12 @@ public class TicTacToe {
             checkHor = currentMatchInfo.field[0][x] + currentMatchInfo.field[1][x] + currentMatchInfo.field[2][x];
             if (checkHor.equals("XXX") || checkVer.equals("XXX")) {
                 System.out.println(currentMatchInfo.playersNames[0] + " won");
+                currentMatchInfo.result = MatchInfo.RESULT_FIRST_WON;
                 return true;
             }
             if (checkHor.equals("OOO") || checkVer.equals("OOO")) {
                 System.out.println(currentMatchInfo.playersNames[1] + " won");
+                currentMatchInfo.result = MatchInfo.RESULT_SECOND_WON;
                 return true;
             }
         }
@@ -126,10 +142,12 @@ public class TicTacToe {
         checkDiag2 = currentMatchInfo.field[2][0] + currentMatchInfo.field[1][1] + currentMatchInfo.field[0][2];
         if (checkDiag1.equals("XXX") || checkDiag2.equals("XXX")) {
             System.out.println(currentMatchInfo.playersNames[0] + " won");
+            currentMatchInfo.result = MatchInfo.RESULT_FIRST_WON;
             return true;
         }
         if (checkDiag1.equals("OOO") || checkDiag2.equals("OOO")) {
             System.out.println(currentMatchInfo.playersNames[1] + " won");
+            currentMatchInfo.result = MatchInfo.RESULT_SECOND_WON;
             return true;
         }
         return false;
