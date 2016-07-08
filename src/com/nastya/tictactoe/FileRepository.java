@@ -9,10 +9,9 @@ public class FileRepository implements Repository {
     public static final String FILE_REPO_TXT = "FileRepo.txt";
 
     public void saveMatch(MatchInfo matchInfo) {
-        System.out.println("saving... todo"); //TODO
         PrintWriter writer = null;
         try {
-            writer = new PrintWriter(FILE_REPO_TXT, "UTF-8");
+            writer = new PrintWriter(new BufferedWriter(new FileWriter(FILE_REPO_TXT, true)));
             String fieldInLine = "";
             for (String[] column : matchInfo.field) {
                 for (String cell : column) {
@@ -22,7 +21,7 @@ public class FileRepository implements Repository {
             writer.println(matchInfo.playersNames[0] + ":" + matchInfo.playersNames[1] + ":" + fieldInLine + ":" +
                     matchInfo.result + ":" + matchInfo.startDate + ":" + matchInfo.endDate + ":" + matchInfo.turnsCount);
             writer.close();
-        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
