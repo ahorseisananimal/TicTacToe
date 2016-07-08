@@ -12,4 +12,9 @@ public class SqlRepository implements Repository {
     public List<MatchInfo> getMatchHistory() {
         return null;// todo
     }
+
+    @Override
+    public void clearMatchHistory() {
+        //todo
+    }
 }

@@ -28,7 +28,7 @@ public class FileRepository implements Repository {
 
     @Override
     public List<MatchInfo> getMatchHistory() {
-       List <MatchInfo> results = new ArrayList<>();
+        List<MatchInfo> results = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(FILE_REPO_TXT))) {
             String line = br.readLine();
             while (line != null) {
@@ -51,8 +51,21 @@ public class FileRepository implements Repository {
                 line = br.readLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            if (e instanceof FileNotFoundException) {
+                System.out.println("The history is empty");
+            } else {
+                e.printStackTrace();
+            }
         }
         return results;
+    }
+
+    @Override
+    public void clearMatchHistory() {
+        //noinspection ResultOfMethodCallIgnored
+        new File(FILE_REPO_TXT).delete();
+        System.out.println();
+        System.out.println("Match history has been cleaned");
+        System.out.println();
     }
 }

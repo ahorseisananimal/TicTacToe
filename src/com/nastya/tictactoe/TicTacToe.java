@@ -27,7 +27,8 @@ public class TicTacToe {
             System.out.println("   2 - Two players");
             System.out.println("   3 - Online game");
             System.out.println("   4 - Match history");
-            System.out.println("   5 - Exit");
+            System.out.println("   5 - Clear match history");
+            System.out.println("   6 - Exit");
             Scanner in = new Scanner(System.in);
             String s = in.next();
             switch (s) {
@@ -44,9 +45,16 @@ public class TicTacToe {
                     printMatchHistory();
                     break;
                 case "5":
+                    clearMatchHistory();
+                    break;
+                case "6":
                     System.exit(0);
             }
         }
+    }
+
+    private static void clearMatchHistory() {
+        repository.clearMatchHistory();
     }
 
     private static void printMatchHistory() {
@@ -78,7 +86,9 @@ public class TicTacToe {
 
         }
         System.out.println();
-        System.out.println("- - - - - - - - - - - - - - - - - - - - - ");
+        if (!matchHistory.isEmpty()) {
+            System.out.println("- - - - - - - - - - - - - - - - - - - - - ");
+        }
     }
 
 

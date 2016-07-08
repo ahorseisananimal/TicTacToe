@@ -6,4 +6,6 @@ public interface Repository {
     void saveMatch(MatchInfo matchInfo);
 
     List<MatchInfo> getMatchHistory();
+
+    void clearMatchHistory();
 }
