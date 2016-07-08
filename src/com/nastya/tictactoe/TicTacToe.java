@@ -1,5 +1,8 @@
 package com.nastya.tictactoe;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
+
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class TicTacToe {
@@ -48,6 +51,34 @@ public class TicTacToe {
 
     private static void printMatchHistory() {
         List<MatchInfo> matchHistory = repository.getMatchHistory();
+        for (MatchInfo matchInfo : matchHistory) {
+            System.out.println();
+            System.out.println("- - - - - - - - - - - - - - - - - - - - - ");
+            System.out.println();
+            System.out.println("First player: " + matchInfo.playersNames[0]);
+            System.out.println("Second player: " + matchInfo.playersNames[1]);
+            printField(matchInfo);
+            System.out.print("Result: ");
+            switch (matchInfo.result){
+                case MatchInfo.RESULT_DRAW:
+                    System.out.println("Draw");
+                    break;
+                case MatchInfo.RESULT_FIRST_WON:
+                    System.out.println(matchInfo.playersNames[0] + " won");
+                    break;
+                case MatchInfo.RESULT_SECOND_WON:
+                    System.out.println(matchInfo.playersNames[1] + " won");
+                    break;
+
+            }
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            System.out.println("Start time: " + formatter.format(new Date(matchInfo.startDate)));
+            System.out.println("End time: " + formatter.format(new Date(matchInfo.endDate)));
+            System.out.println("Total number of turns: "+ matchInfo.turnsCount);
+
+        }
+        System.out.println();
+        System.out.println("- - - - - - - - - - - - - - - - - - - - - ");
     }
 
 
@@ -59,7 +90,7 @@ public class TicTacToe {
             askPlayersName(1);
         }
         createField();
-        printField();
+        printField(currentMatchInfo);
         currentMatchInfo.startDate = System.currentTimeMillis();
         while (true) {
             playersTurn(1);
@@ -153,7 +184,7 @@ public class TicTacToe {
         return false;
     }
 
-    private static void printField() {
+    private static void printField(MatchInfo currentMatchInfo) {
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {
                 System.out.print(currentMatchInfo.field[x][y] + " ");
@@ -207,7 +238,7 @@ public class TicTacToe {
 
         }
 
-        printField();
+        printField(currentMatchInfo);
 
     }
 
@@ -221,7 +252,7 @@ public class TicTacToe {
                 break;
             }
         }
-        printField();
+        printField(currentMatchInfo);
     }
 
       /*   for (int i = 0; i < 10; i++) {
